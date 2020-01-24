@@ -22,15 +22,20 @@ class Words(object):
                 line = line.strip()
                 if (not line) or (not len(line) > 3) or (not self.required_letter in line) or (not all([x in self.all_letters for x in line])):
                     continue
-                words.setdefault(len(line), []).append(line)
+                used_all = '*' if all([x in line for x in self.all_letters]) else ' '
+                words.setdefault(len(line), [])
+                if not f'{used_all}{line}' in words[len(line)]:
+                    words.setdefault(len(line), []).append(f'{used_all}{line}')
         return words
 
     def main(self):
         words = self.get_words()
         for word_length in sorted(words, reverse=True):
             print(f'{word_length}-letter words')
-            for word in words[word_length]:
-                print(f'    {word}')
+            cols = int(160 / (word_length + 3))
+            for i in range(0, len(words[word_length]), cols):
+                print(f'    {", ".join(words[word_length][i:i+cols])}')
+            print()
         return 
 
 
